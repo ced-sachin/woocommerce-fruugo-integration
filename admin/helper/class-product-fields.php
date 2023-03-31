@@ -441,21 +441,17 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Fields' ) ) :
 					),
 				);
 
-				// if ( 'product' === $post->post_type && isset( $post->ID ) ) {
-				// 	$product = get_product( $post->ID );
-				// 	$product_type = $product->get_type();
-				// }
+				if ( 'product' === $post->post_type && isset( $post->ID ) ) {
+					$product = get_product( $post->ID );
+					$product_type = $product->get_type();
+				}
 				
-				// if( $product_type=='variable' || $product_type=='simple' ) {
-				// 	$fields = is_array( apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) : array();
-				// } else {
-				// 	// The product edit page is not open
-				// 	$fields = is_array( apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) : array();
-				// }
-
-				// echo '<pre>'; print_r($post); die('<br>abcdef');
-				$fields = is_array( apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) : array();
-				// $fields = is_array( $required_fields ) ? $required_fields : array() ;
+				if( $product_type=='variable' || $product_type=='simple' ) {
+					$fields = is_array( apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) : array();
+				} else {
+					// The product edit page is not open
+					$fields = is_array( apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) : array();
+				}
 				
 			} elseif ( 'extra_fields' ==  $type  ) {
 
