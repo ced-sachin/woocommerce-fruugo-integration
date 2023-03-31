@@ -76,7 +76,7 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 			add_action( 'ced_fruugo_validate_marketplace_configuration_settings', array( $this, 'ced_fruugo_validate_marketplace_configuration_settings' ), 10, 2 );
 			add_action( 'ced_fruugo_required_fields_process_meta_simple', array( $this, 'ced_fruugo_required_fields_process_meta_simple' ), 11, 1 );
 			add_filter( 'ced_fruugo_required_product_fields', array( $this, 'add_fruugo_required_fields' ), 11, 2 );
-			add_filter( 'ced_fruugo_required_fields_product_level', array( $this, 'add_fruugo_required_fields_product' ), 12, 1 );
+			// add_filter( 'ced_fruugo_required_fields_product_level', array( $this, 'add_fruugo_required_fields_product' ), 12, 1 );
 			add_action( 'ced_fruugo_render_different_input_type', array( $this, 'ced_fruugo_render_different_input_type' ), 10, 2 );
 
 			add_action( 'ced_fruugo_required_fields_process_meta_variable', array( $this, 'ced_fruugo_required_fields_process_meta_variable' ), 11, 1 );
@@ -690,23 +690,23 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 		 *
 		 * @name add_fruugo_required_fields_product
 		 */
-		public function add_fruugo_required_fields_product( $fields = array(), $post = '' ) {
+		// public function add_fruugo_required_fields_product( $fields = array(), $post = '' ) {
 			
-			$cat_val=get_post_meta($post->ID,'_umb_fruugo_category',true);
+		// 	$cat_val=get_post_meta($post->ID,'_umb_fruugo_category',true);
 
-			$fields[] = array(
-				'type'   => '_text_input',
-				'id'     => '_umb_fruugo_category',
-				'fields' => array(
-					'id'          => '_umb_fruugo_category',
-					'label'       => __( 'Fruugo Category', 'ced-fruugo' ),
-					'desc_tip'    => true,
-					'description' => __( 'Identify the category specification. There is only one category can be used for any single item. NOTE: Once an item is created, this information cannot be updated.', 'ced-fruugo' ),
-				),
-				'value' =>$cat_val
-			);
-			return $fields;
-		}
+		// 	$fields[] = array(
+		// 		'type'   => '_text_input',
+		// 		'id'     => '_umb_fruugo_category',
+		// 		'fields' => array(
+		// 			'id'          => '_umb_fruugo_category',
+		// 			'label'       => __( 'Fruugo Category', 'ced-fruugo' ),
+		// 			'desc_tip'    => true,
+		// 			'description' => __( 'Identify the category specification. There is only one category can be used for any single item. NOTE: Once an item is created, this information cannot be updated.', 'ced-fruugo' ),
+		// 		),
+		// 		'value' =>$cat_val
+		// 	);
+		// 	return $fields;
+		// }
 
 		public function ced_fruugo_required_fields_process_meta_simple( $post_id ) {
 			// var_dump($post_id);

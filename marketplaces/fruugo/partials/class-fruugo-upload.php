@@ -504,11 +504,14 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 			
 				// var_dump($vat);
 				// var_dump($leadtime);
+				$category = html_entity_decode($category, ENT_QUOTES);
 				$category = str_replace( '>', ' > ', $category );
 				$category = str_replace( '&', ' & ', $category );
 				$category = str_replace( '  >  ', ' > ', $category );
 				$category = str_replace( '  &  ', ' & ', $category );
 				$category = preg_replace( '/(\w+)([A-Z])/U', '\\1 \\2', $category );
+				
+				// print_r($category); die('<br>abdc');
 
 				$ced_fruugo_country=get_option('ced_fruugo_country_other');
 				$vat=get_option('ced_fruugo_vat_rate');
@@ -814,6 +817,8 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 			}
 			if(empty($category))
 			$category                 = get_post_meta( $variation['variation_id'], '_umb_fruugo_category[0]', true );
+			
+			$category = html_entity_decode($category, ENT_QUOTES);
 			$category = str_replace( '>', ' > ', $category );
 			$category = str_replace( '&', ' & ', $category );
 			$category = str_replace( '  >  ', ' > ', $category );
@@ -823,8 +828,7 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 			$vat=get_option('ced_fruugo_vat_rate');
 			$fruugoCurrency=get_option('ced_fruugo_currency_other');
 			$language=get_option('ced_fruugo_langauge_other');
-
-			
+			// print_r($category); die('<br>abc');
 
                    $description = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $description);
 			       $description = preg_replace('/[\x00-\x1F\x7F]/', '', $description);

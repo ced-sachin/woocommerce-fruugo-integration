@@ -112,21 +112,20 @@ class CED_FRUUGO_Admin {
 			// echo '<pre>';
 			// var_dump($selectedfruugoCategories);
 			// die;
-			// echo"<div class='ced_fruugo_category_dropdown'>";
+			echo"<div class='ced_fruugo_category_dropdown'>";
 			woocommerce_wp_select(
-				array(
-					'id'     => '_umb_fruugo_category',
-					'label'   =>'Fruugo Category',
-					'options' => $selectedfruugoCategories,
-					'value'   => isset( $value ) ? $value : '',
-					'wrapper_class' => 'hidden',
-					)
-			);
+			array(
+				'id'     => '_umb_fruugo_category',
+				'label'   =>'Fruugo Category',
+				'options' => $selectedfruugoCategories,
+				'value'   => isset( $value ) ? $value : '',
+			)
+		);
 		
-		// echo '<div id="ced_fruugo_marketplace_loader" class="loading-style-bg" style="display: none;">
-		// 	<img src="'; echo esc_html(plugin_dir_url( __dir__ ));echo '//admin/images/BigCircleBall.gif"></div>';
-		// echo '<input type="button" value="save" class="button button-primary button-small" data-id="'.$post->ID.'" id="ced_save_fruugo_cat">';
-		// echo"</div><br/>";
+		echo '<div id="ced_fruugo_marketplace_loader" class="loading-style-bg" style="display: none;">
+			<img src="'; echo esc_html(plugin_dir_url( __dir__ ));echo '//admin/images/BigCircleBall.gif"></div>';
+		echo '<input type="button" value="save" class="button button-primary button-small" data-id="'.$post->ID.'" id="ced_save_fruugo_cat">';
+		echo"</div><br/>";
 
 	}
 	
