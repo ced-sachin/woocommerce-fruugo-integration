@@ -789,9 +789,13 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 				require_once CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-upload.php';
 				$fruugoUpload = CedfruugoUpload::get_instance();
 				$fruugoUpload->fetchAssignedProfileDataOfProduct( $proId );
-
+				$profileID       = get_post_meta( $proId, 'ced_fruugo_profile', true );
 				$missingValues = array();
 				$missingValues = $fruugoUpload->fruugoCheckRequiredfields( $simpleIDs, true );
+				if($profileID == 0){
+					$statusArray['profileAssigned'] = 0;
+					return $statusArray;
+				}
 				if ( is_array( $missingValues ) && ! empty( $missingValues ) ) {
 					$statusArray['isReady']     = false;
 					$statusArray['missingData'] = $missingValues;
@@ -811,6 +815,7 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 		 * @param array $proIds
 		 */
 		public function upload( $proIds = array(), $isWriteXML = true ) {
+			// echo '<pre>'; print_r($proIds); die('<br>abc');
 			if ( file_exists( CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-upload.php' ) ) {
 				require CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-upload.php';
 				$fruugoUploadInstance = CedfruugoUpload::get_instance();
@@ -999,7 +1004,7 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 			}
 			fclose( $wH );
 			unset( $wH );
-			print_r( 'Created' );
+			// print_r( 'created' );
 		}
 
 
@@ -1015,7 +1020,7 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 					// update_option( 'fruugo_prod_offset', 1 );
 					$Offset = 0;
 				}
-				// print_r($Offset); die('<br>abcde');
+				
 				$qry = "SELECT * from `$table_cron_daily` LIMIT 1 Offset $Offset ;";
 				//$resultdata = $wpdb->get_results( $qry );
 				$resultdata =$wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}fruugo_products_upload LIMIT 1 Offset %d", $Offset ), 'ARRAY_A' );
@@ -1044,11 +1049,13 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 					if ( ! empty( $csv_files ) && is_array( $csv_files ) ) {
 
 						$this->joinFiles( $csv_files, $result );
-						// echo 'csv created';
+					    echo 'csv created';
 						update_option( 'fruuggo_prod_files', ' ' );
 						update_option( 'fruugo_prod_offset', ' ' );
 						$this->upload_all();
 
+					} else {
+						echo 'csv not created';
 					}
 				}
 			}

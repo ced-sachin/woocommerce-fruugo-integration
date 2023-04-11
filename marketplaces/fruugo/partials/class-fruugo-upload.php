@@ -126,7 +126,7 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 		public function upload( $productIds = array() ) {
 			// error_reporting(~0);
 			// ini_set('display_errors', 1);
-			// echo "1";print_r($productIds);
+			// echo "1";print_r($productIds);die('<br>abcdef');
 			$chunk_size = get_option( '_ced_frugo_chunk' );
 			if ( '' == $chunk_size || 0 == $chunk_size ) {
 				$chunk_size = 100;
@@ -171,9 +171,11 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 		}
 
 		public function prepareItems( $productIds, $cron = 'False', $Offset = 'False' ) {
-			// print_r($productIds);die;
+			// print_r($cron);die;	
 			// error_reporting(~0);
 			// ini_set('display_errors', 1);
+
+			$check_profile_count = 0;
 			if ( is_array( $productIds ) && ! empty( $productIds ) ) {
 				
 				$this->error_msg = '';
@@ -182,18 +184,29 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 					ignore_user_abort( true );
 					//ini_set( 'memory_limit', '-1' );
 					// delete_post_meta( $productId, 'fruugoSkuId' );
+					$profileID = get_post_meta( $productId, 'ced_fruugo_profile', true );
+
+					if( $profileID == '0' && $cron == 'False' || $profileID == '' && $cron == 'False' ) {
+						$check_profile_count += 1;
+						$this->error_msg .= ' ';
+						continue;
+					}elseif( $profileID == '0' || $profileID == '' ) {
+						continue;
+					}					
+
 					$this->fetchAssignedProfileDataOfProduct( $productId );
 
 					$check_if_uploaded = get_post_meta( $productId, 'fruugoSkuId', false );
 					$check_if_uploaded = false;
 					$already_present   = false;
+					
+
 					if ( ! $check_if_uploaded ) {
 
 						$_product    = wc_get_product( $productId );
 						$image_id    = get_post_thumbnail_id( $_product->get_id() );
 						$productType = $_product->get_type();
 						try {
-
 							if ( 'variable' == $productType ) {
 								// $this->data = $preparedData;
 								$variations = $_product->get_available_variations();
@@ -216,14 +229,15 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 							$this->error_msg .= 'Message: ' . $productId . '--' . $e->getLastResponse();
 						}
 					} else {
-						$already_present = true;
+						$already_present = true;				
 					}
 				}
 				// echo '<pre>'; print_r($preparedData); die('<br>abnde');
 				if ( isset( $preparedData ) && is_array( $preparedData ) && ! empty( $preparedData ) ) {
 					$this->create_csv( $preparedData, $cron, $Offset );
 				} else {
-					$Offset_to_save = $Offset + 1;
+					$Offset_to_save = (int)$Offset + 1;
+					print_r('No valid product in these product ids to upload !!!');
 					update_option( 'fruugo_prod_offset', $Offset_to_save );
 				}
 
@@ -231,6 +245,11 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 					if ( $already_present ) {
 						$this->error_msg .= 'Some products are already present.';
 					}
+					if( count($productIds)==$check_profile_count && $cron == 'False') {
+						$this->error_msg .= 'Assign profile to add product to csv.';
+					}elseif($check_profile_count < count($productIds) && $check_profile_count > 0 && $cron == 'False') {
+					 	$this->error_msg .= 'Some product not added as profile not assigned.';
+					 }
 					$message              = $this->error_msg;
 					$classes              = 'error is-dismissable';
 					$this->final_response = array(
@@ -239,7 +258,6 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 					);
 
 				} else {
-
 					$notice['message'] = 'Product added successfully on CSV.';
 					if ( $already_present ) {
 						$notice['message'] = 'Same product are already present.';
@@ -262,7 +280,7 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 			}
 			// echo count($preparedData);
 			if ( 'cron_products' == $cron ) {
-				var_dump($Offset);
+				// var_dump($Offset);
 				$file      = fopen( $uploadDir . '/Merchant' . $Offset . '.csv', 'w' );
 				$csv_files = get_option( 'fruuggo_prod_files' );
 				if ( empty( $csv_files ) || ' ' == $csv_files ) {
@@ -273,9 +291,10 @@ if ( ! class_exists( 'CedfruugoUpload' ) ) {
 				}
 				update_option( 'fruuggo_prod_files', $csv_files );
 				$csv_files = get_option( 'fruuggo_prod_files' );
-				// print_r($csv_files);
+				print_r('Merchant' . $Offset .'.csv created');
 				++$Offset;
 				update_option( 'fruugo_prod_offset', $Offset );
+				
 			} else {
 
 				$file = fopen( $uploadDir . '/Merchant.csv', 'w' );

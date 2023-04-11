@@ -808,13 +808,18 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 								// var_dump($status);
 								// echo '<br>';
 								if ( is_array( $status ) ) {
+									$profileId = get_post_meta($var_post->ID, 'ced_fruugo_profile' , true );
+									$profileAssigned = isset( $status['profileAssigned'] ) ? $status['profileAssigned'] : $profileId;
 									$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
-									if ( $is_ready ) {
+									// print_r($profileId); print_r('::'.$profileAssigned);
+									if( $profileAssigned == 0 || $profileAssigned == '') {
+										$html .= '<span class="ced_fruugo_proMissing ced_fruugo_IsReady"> <b style="color:red">Profile Not Assigned</b> </span><div class="ced_fruugo_MissingData">';
+									} elseif ( $is_ready === true && $profileAssigned != 0 ) {
 										$listing_id = get_post_meta( $product_id, 'fruugoSkuId', true );
-										if ( '' != $listing_id ) {
+										if (''!=  $listing_id  ) {
 											$html .= '<b>Uploaded</b></div>';
 										} else {
-											$html .= '<span class="ced_fruugo_proReady">' . $marketplace . ': Ready </span></div>';
+											$html .= '<span class="ced_fruugo_proReady">'. $marketplace .': Ready </span></div>';
 										}
 									} else {
 										$html .= '<span class="ced_fruugo_proMissing ced_fruugo_IsReady"> <b style="color:red">Missing Listing Data</b> </span><div class="ced_fruugo_MissingData">';
@@ -955,8 +960,13 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 								// var_dump('fff');
 								//print_r($status);
 								if ( is_array( $status ) ) {
+									$profileId = get_post_meta($post->ID, 'ced_fruugo_profile' , true );
+									$profileAssigned = isset( $status['profileAssigned'] ) ? $status['profileAssigned'] : $profileId;
 									$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
-									if ( $is_ready ) {
+									// print_r($profileId); print_r('::'.$profileAssigned);
+									if( $profileAssigned == 0 || $profileAssigned == '') {
+										$html .= '<span class="ced_fruugo_proMissing ced_fruugo_IsReady"> <b style="color:red">Profile Not Assigned</b> </span><div class="ced_fruugo_MissingData">';
+									} elseif ( $is_ready === true && $profileAssigned != 0 ) {
 										$listing_id = get_post_meta( $product_id, 'fruugoSkuId', true );
 										if (''!=  $listing_id  ) {
 											$html .= '<b>Uploaded</b></div>';
@@ -965,7 +975,6 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 										}
 									} else {
 										$html .= '<span class="ced_fruugo_proMissing ced_fruugo_IsReady"> <b style="color:red">Missing Listing Data</b> </span><div class="ced_fruugo_MissingData">';
-
 										$errorArray = isset( $status['missingData'] ) ? $status['missingData'] : array();
 										$html      .= $this->printMissingData( $errorArray );
 										$html      .= '</div>';
