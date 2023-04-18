@@ -57,10 +57,12 @@ if ( isset( $_POST['saveData'] ) ) {
 	// }
 }
 $marketPlaces    = fruugoget_enabled_marketplaces();
-$cronRelatedData = get_option( 'ced_fruugo_cronRelatedData', false );
-
+$cronRelatedData = get_option( 'ced_fruugo_cronRelatedData', 'no' );
+if(isset($cronRelatedData['ced_fruugo_allow_access_to_dev'])) {
 $ced_fruugo_allow_access_to_dev = ( 'yes' == $cronRelatedData['ced_fruugo_allow_access_to_dev'] ) ? 'checked="checked"' : '';
+}
 $ced_fruugo_cron_failure_msg    = isset( $cronRelatedData['ced_fruugo_cron_failure_msg'] ) ? $cronRelatedData['ced_fruugo_cron_failure_msg'] : '';
+
 if ( '' == $ced_fruugo_cron_failure_msg ) {
 	$ced_fruugo_cron_failure_msg = __( 'This mail is to inform you that Woocommerce fruugo Integration plugin fails to fetch orders due to CRON failure at your server. Please contact your Developer or Service-Provider.', 'ced-fruugo' );
 }
@@ -170,10 +172,30 @@ $current_schedule = get_option( 'umb_auto_sync_frequency', true );
 				<table class="ced_fruugo_return_address wp-list-table widefat fixed striped activityfeeds" >
 					<tbody>
 						<tr>
-							<th><?php esc_html_e( 'Location Of Cron File', 'ced-fruugo' ); ?></th>
+							<th><?php esc_html_e( 'Location Of Product Feed & Order Cron File', 'ced-fruugo' ); ?></th>
 							<td>
 								<?php
 								$ced_fruugo_cron_file_path = WP_PLUGIN_DIR . '/woocommerce-fruugo-integration/includes/class-ced-fruugo-cron.php';
+
+								?>
+								<input type="text" name="" value="<?php esc_html_e($ced_fruugo_cron_file_path); ?>" readonly >
+									
+								<?php
+								if ( is_array( $marketPlaces ) && ! empty( $marketPlaces ) ) {
+									foreach ( $marketPlaces as $marketPlace ) {
+										$ced_fruugo_cron_file_path = WP_PLUGIN_DIR . "/ultimate-market-placebundle/marketplaces/$marketPlace/api/class-$marketPlace-ack-cron.php";
+										?>
+										<?php
+									}
+								}
+								?>
+							</td>
+						</tr>
+						<tr>
+							<th><?php esc_html_e( 'Location Of Order Cron File', 'ced-fruugo' ); ?></th>
+							<td>
+								<?php
+								$ced_fruugo_cron_file_path = WP_PLUGIN_DIR . '/woocommerce-fruugo-integration/includes/class-ced-fruugo-order-cron.php';
 
 								?>
 								<input type="text" name="" value="<?php esc_html_e($ced_fruugo_cron_file_path); ?>" readonly >

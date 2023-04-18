@@ -118,6 +118,7 @@ $umb_fruugo_order_status = 'Acknowledged';
 						<?php
 
 						$count = 0;
+						if(isset($order_item) && is_array($order_item)) {
 						foreach ( $order_item['ItemsArray'] as $valdata ) {
 							$product    = new WC_Product( $valdata['ID'] );
 							$sku        = $product->get_sku();
@@ -142,7 +143,7 @@ $umb_fruugo_order_status = 'Acknowledged';
 								</td>
 
 							</tr>
-							<?php } ?>
+							<?php }} ?>
 						</tbody>	
 					</table>	
 				</div>

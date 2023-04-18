@@ -83,7 +83,9 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 			/*loading scripts*/
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_fruugo_scripts' ) );
 			add_action( 'ced_fruugo_cron_job', array( $this, 'ced_fruugo_cron_manager' ) );
+			add_action( 'ced_fruugo_order_cron_job', array( $this, 'ced_fruugo_order_cron_manager' ) );
 			//add_action( 'ced_fruugo_product_order', array( $this, 'ced_fruugo_product_order' ) );
+			// add_action( 'wp_ajax_ced_fruugo_custom_cron', array( $this, 'ced_fruugo_cron_manager') );
 			add_action( 'ced_fruugo_import_data_from_csv_to_DB', array( $this, 'ced_fruugo_import_data_from_csv_to_DB' ), 10, 2 );
 			// $this->loadDependency();
 			// add_action( 'woocommerce_order_status_completed',array( $this, 'ced_send_shipping' ));
@@ -851,6 +853,7 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 		 */
 
 		public function fetchOrders() {
+			
 			if ( file_exists( CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-orders.php' ) ) {
 				require_once CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-orders.php';
 				$fruugoOrders = new CedfruugoOrders();
@@ -1078,6 +1081,11 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 			// die('df');
 		}
 
+		public function ced_fruugo_order_cron_manager() {
+
+			$this->fetchOrders();
+
+		}
 	
 
 		public function ced_inventory_update() {

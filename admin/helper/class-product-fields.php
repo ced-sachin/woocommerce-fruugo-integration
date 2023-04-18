@@ -450,6 +450,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Fields' ) ) :
 					$fields = is_array( apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_fields_product_level', $required_fields, $post ) : array();
 				} else {
 					// The product edit page is not open
+					unset($required_fields[0], $required_fields[1]);
 					$fields = is_array( apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) ) ? apply_filters( 'ced_fruugo_required_product_fields', $required_fields, $post ) : array();
 				}
 				
