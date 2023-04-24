@@ -137,7 +137,7 @@ if ( ! class_exists( 'CED_FRUUGO_Order_Lister' ) ) :
 				// die('kjk');
 							$frugo_search_order_id = !empty($_REQUEST['s']) ? $_REQUEST['s'] : 0 ;
 							 //$UmbOrders = $wpdb->get_results( $wpdb->prepare( "SELECT `post_id` FROM $wpdb->postmeta  WHERE `meta_key`= %s AND  `meta_value` LIKE%s", '_ced_fruugo_order_id', $frugo_search_order_id ,1) ,'ARRAY_A');
-							$UmbOrders = $wpdb->get_results( $wpdb->prepare( "SELECT `post_id` FROM $wpdb->postmeta  WHERE `meta_key`= %s AND `meta_value`= %s", '_ced_fruugo_order_id', $frugo_search_order_id ,1) ,'ARRAY_A');
+							$UmbOrders = $wpdb->get_results( $wpdb->prepare( "SELECT `post_id` FROM $wpdb->postmeta  WHERE `meta_key`= %s AND `meta_value` LIKE %s", '_ced_fruugo_order_id', $frugo_search_order_id ,1) ,'ARRAY_A');
 							//var_dump($UmbOrders);
 							// die('khk');
 							}else {
@@ -185,8 +185,6 @@ if ( ! class_exists( 'CED_FRUUGO_Order_Lister' ) ) :
 		 */
 		public function has_items() {
 
-			
-
 			$args = array(
 				'post_type'      => wc_get_order_types(),
 				'post_status'    => array_keys( wc_get_order_statuses() ),
@@ -217,7 +215,7 @@ if ( ! class_exists( 'CED_FRUUGO_Order_Lister' ) ) :
 							array(
 								'key'     => '_ced_fruugo_order_id',
 								'value'   => $_REQUEST['s'],
-								'compare' => '=',
+								'compare' => 'LIKE',
 							),
 						),
 					);
@@ -245,7 +243,6 @@ if ( ! class_exists( 'CED_FRUUGO_Order_Lister' ) ) :
 		 * @see WP_List_Table::display_rows()
 		 */
 		public function display_rows() {
-
 			if ( $this->has_items() ) {
 				$loop = $this->_loop;
 				if ( $loop->have_posts() ) {
