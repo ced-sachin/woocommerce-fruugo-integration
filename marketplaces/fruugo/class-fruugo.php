@@ -828,14 +828,13 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 					'post_status' => array( 'publish' ),
 					'post_type'   => 'product',
 					'fields'      => 'ids',
-
 				)
 			);
 			// var_dump(count($sku_array));
 			// die("333");
 			if ( file_exists( CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-upload.php' ) ) {
 				require_once CED_FRUUGO_DIRPATH . 'marketplaces/fruugo/partials/class-fruugo-upload.php';
-				$this->upload( $store_products );
+				return $this->upload( $store_products );
 			}
 		}
 		/**
