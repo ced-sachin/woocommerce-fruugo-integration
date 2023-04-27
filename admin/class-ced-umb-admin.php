@@ -273,12 +273,13 @@ class CED_FRUUGO_Admin {
 		$args = array(
 			'post_type' => 'product',
 			'posts_per_page' => -1,
+			'fields' => 'ids'
 		);
 		
 		$products = new WP_Query( $args );
-
-		foreach($products->posts as $product) {
-			update_post_meta( $product->ID, 'ced_fruugo_profile', $profId );
+		
+		foreach($products->posts as $productid) {
+			update_post_meta( $productid, 'ced_fruugo_profile', $profId );
 		}
 
 		$args1 = array(
