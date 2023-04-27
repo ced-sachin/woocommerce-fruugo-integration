@@ -116,23 +116,25 @@ $current_schedule = get_option( 'umb_auto_sync_frequency', true );
 								// }
 								?>
 								<!-- <input type="number" name="chunk_size" value="<?php esc_html_e($chunk_size); ?>"> -->
-								<input type="checkbox" id="ced_default_setting" checked=<?php esc_html_e($checked); ?>>	
+								<input type="checkbox" id="ced_default_setting" <?php $checked == 'checked'? esc_html_e('checked'): esc_html_e('') ?> >	
 							</td>
 						</tr>
 						<tr>
 							<td>
 							<div class="NormalPrice">
+								<?php $normalpriceheader = get_option('ced_normal_price_header', 1 ); ?>
 								<select class="normalpriceheader">
-									<option value="NormalPriceWithoutVAT">NormalPriceWithoutVAT</option>
-									<option value="NormalPriceWithVAT">NormalPriceWithVAT</option>
+									<option <?php $normalpriceheader == 'NormalPriceWithoutVAT' ?  esc_html_e('selected') : esc_html_e('') ?> value="NormalPriceWithoutVAT">NormalPriceWithoutVAT</option>
+									<option <?php $normalpriceheader == 'NormalPriceWithVAT' ?  esc_html_e('selected') : esc_html_e('') ?> value="NormalPriceWithVAT">NormalPriceWithVAT</option>
 								</select>
 							</div>
 							</td>
 							<td>
 							<div class="DiscountPrice">
+								<?php $discountpriceheader = get_option('ced_discount_price_header', 1 ); ?>
 								<select class="discountpriceheader">
-									<option value="DiscountPriceWithoutVAT">DiscountPriceWithoutVAT</option>
-									<option value="DiscountPriceWithVAT">DiscountPriceWithVAT</option>
+									<option <?php $discountpriceheader == 'DiscountPriceWithoutVAT' ?  esc_html_e('selected') : esc_html_e('') ?> value="DiscountPriceWithoutVAT">DiscountPriceWithoutVAT</option>
+									<option <?php $discountpriceheader == 'DiscountPriceWithVAT' ?  esc_html_e('selected') : esc_html_e('') ?> value="DiscountPriceWithVAT">DiscountPriceWithVAT</option>
 								</select>
 							</div>
 							</td>
