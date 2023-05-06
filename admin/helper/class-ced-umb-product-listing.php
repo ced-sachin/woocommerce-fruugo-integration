@@ -177,6 +177,22 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 			$this->_column_headers = array( $columns, $hidden, $sortable );
 
 			$current_page = $this->get_pagenum();
+			try{
+			$data = $this->remove_posts_based_on_function();
+			} catch(\Exception $e) {
+					print_r($e->getMessage()." error at line no. ". $e->getLine()." in file ". $e->getFile());
+				} catch(\Error $e) {
+				   print_r($e->getMessage()." error at line no. ". $e->getLine()." in file ". $e->getFile());
+				}
+			// echo '<pre>'; print_r($data); die(__METHOD__);
+			// Modify query based on data
+			if ( ! empty( $data ) ) {
+				add_action( 'pre_get_posts', function( $webhooks ) use ( $data ) {
+					if ( $webhooks->is_main_query() ) {
+						$webhooks->set( 'post__not_in', $data );
+					}
+				} );
+			}
 
 			// Query args
 			$args = array(
@@ -185,7 +201,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				'ignore_sticky_posts' => true,
 				'paged'               => $current_page,
 			);
-
+			
 			// Handle the status query
 			if ( ! empty( $_REQUEST['status'] ) ) {
 				$args['post_status'] = sanitize_text_field( $_REQUEST['status'] );
@@ -276,9 +292,26 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				}
 				
 			}
-
 			$args['meta_query'] = $meta_query;
 			$webhooks    = new WP_Query( $args );
+			// echo '<pre>';
+			//  print_r(($webhooks)); die(__METHOD__);	
+			// if ( ! empty( $_REQUEST['pro_valid_status'] ) ) {
+			
+				
+			// 	$product_valid = isset( $_GET['pro_valid_status'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_valid_status'] ) ) : '';
+				
+			// 	if ( ! empty( $product_valid ) ) {
+				// try{
+				// 	$webhooks->posts = array_filter($webhooks->posts, array($this, 'filter_products'));
+				// }catch(\Exception $e) {
+				// 	print_r($e->getMessage()." error at line no. ". $e->getLine()." in file ". $e->getFile());
+				// } catch(\Error $e) {
+				//    print_r($e->getMessage()." error at line no. ". $e->getLine()." in file ". $e->getFile());
+				// }
+				// echo '<pre>'; print_r($webhooks); die('<br>'.__METHOD__);
+			// 	}
+			// }
 			$total_items = $webhooks->found_posts;
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
@@ -311,6 +344,71 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 					'total_pages' => ceil( $total_items / $per_page ),
 				)
 			);
+		}
+
+		function remove_posts_based_on_function() {
+				$file_name = esc_html(CED_FRUUGO_DIRPATH) . 'marketplaces/fruugo/class-fruugo.php';
+			require_once $file_name;
+			$class_name = 'CED_FRUUGO_manager';
+			$instance = $class_name::get_instance();
+			$args = array(
+				'post_type' => 'product',
+				'posts_per_page' => -1,
+				'fields' => 'ids'
+			);
+			$remove_prodIds = array();
+			$products = new WP_Query( $args );
+			
+			foreach($products->posts as $productid) {
+				$status = $instance->validate( $productid );
+				$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
+				// print_r($status); die(__METHOD__);
+				if($is_ready==1){
+					array_push($remove_prodIds, $productid);
+				}
+			}
+	
+			$args1 = array(
+				'post_type'     => 'product_variation',
+				'post_status'   => 'publish',
+				'fields'        => 'ids',
+				'posts_per_page'=> -1
+			);
+			
+			$variations = get_posts( $args1 );
+			foreach ( $variations as $variation_id ) {
+				$status = $instance->validate( $variation_id );
+				$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
+				// print_r($status); die(__METHOD__);
+				if($is_ready==1){
+					array_push($remove_prodIds, $variation_id);
+				}
+			}
+			return $remove_prodIds; // Example: Remove posts with IDs 1, 2, and 3
+			
+		}
+
+		public function filter_products($product) {
+			// echo '<pre>'; print_r($products); die(__METHOD__);
+			// Perform custom logic to determine if product should be removed
+			if ($this->should_remove_product($product)) {
+				return false; // Remove the product from the array
+			}
+			return true; // Keep the product in the array
+		}
+
+		private function should_remove_product($product) {
+			$file_name = esc_html(CED_FRUUGO_DIRPATH) . 'marketplaces/fruugo/class-fruugo.php';
+			require_once $file_name;
+			$class_name = 'CED_FRUUGO_manager';
+			$instance = $class_name::get_instance();
+				$status = $instance->validate( $product->ID );
+				$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
+				// print_r($status); die(__METHOD__);
+				if($is_ready==1){
+					return true;
+				}
+			return false;
 		}
 
 		/**
