@@ -179,13 +179,14 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 			$current_page = $this->get_pagenum();
 
 			// Query args
+
 			$args = array(
 				'post_type'           => $post_type,
 				'posts_per_page'      => $per_page,
 				'ignore_sticky_posts' => true,
 				'paged'               => $current_page,
 			);
-
+			
 			// Handle the status query
 			if ( ! empty( $_REQUEST['status'] ) ) {
 				$args['post_status'] = sanitize_text_field( $_REQUEST['status'] );
@@ -271,16 +272,16 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				if ( ! empty( $per_page ) ) {
 					$args['post_type']      = 'product';
 			        $args['posts_per_page'] = $per_page;
-			        $args['paged']          = $page_number;
+			        $args['paged']          = $current_page;
 
 				}
 				
 			}
-
+			
 			$args['meta_query'] = $meta_query;
 			$webhooks    = new WP_Query( $args );
 			$total_items = $webhooks->found_posts;
-
+			
 			if ( ! empty( $_REQUEST['s'] ) ) {
 				if ( isset( $_REQUEST['ced_fruugo_search_by'] ) && 'sku' == sanitize_text_field($_REQUEST['ced_fruugo_search_by']) ) {
 					$args = array(
@@ -302,6 +303,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 					$webhooks = new WP_Query( $args );
 				}
 			}
+			
 			$total_items = $webhooks->found_posts;
 			$this->_loop = $webhooks;
 			$this->set_pagination_args(
@@ -338,7 +340,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 
 				$loop = $this->_loop;
 				if ( $loop->have_posts() ) {
-					// print_r($loop);
+					
 					while ( $loop->have_posts() ) {
 						$loop->the_post();
 						$string = strtolower( $loop->post->post_title );
@@ -1097,7 +1099,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				if ( ! empty( $per_page ) ) {
 					$args['post_type']      = 'product';
 			        $args['posts_per_page'] = $per_page;
-			        $args['paged']          = $page_number;
+			        $args['paged']          = $current_page;
 
 				}
 			

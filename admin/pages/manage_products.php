@@ -161,6 +161,8 @@ if ( is_array( $availableMarketPlaces ) && ! empty( $availableMarketPlaces ) ) {
 				'20'  => __( '20 per page', 'ced-fruugo' ),
 				'50'  => __( '50 per page', 'ced-fruugo' ),
 				'100' => __( '100 per page', 'ced-fruugo' ),
+				'500' => __( '500 per page', 'ced-fruugo' ),
+				'1000' => __( '1000 per page', 'ced-fruugo' ),
 			);
 			$previous_selected_pro_per_page     = isset( $_GET['pro_per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_per_page'] ) ) : '';
 
