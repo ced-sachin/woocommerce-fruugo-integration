@@ -198,6 +198,22 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				}
 			}
 
+			if ( ! empty( $_REQUEST['pro_valid_status'] ) ) {
+				
+				$pro_valid_status = isset( $_GET['pro_valid_status'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_valid_status'] ) ) : '';
+				// echo $pro_valid_status; //die(__METHOD__);
+				if ( ! empty( $pro_valid_status ) ) {
+					$meta_query[]       = array(
+						'key'     => 'ced_fruugo_ready',
+						'value'   =>  $pro_valid_status ,
+						'compare' => '=',
+					);
+				}
+				if (!empty($meta_query)) {
+					$args['meta_query'] = $meta_query;
+				}
+			}
+
 			if ( ! empty( $_REQUEST['pro_cat_sorting'] ) ) {
 				$pro_cat_sorting = isset( $_GET['pro_cat_sorting'] ) ? sanitize_text_field($_GET['pro_cat_sorting']) : '';
 				if ( '' != $pro_cat_sorting ) {
@@ -265,10 +281,13 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 						'compare' => '=',
 					);
 				}
-			}	
+			}
 					
 			if ( ! empty( $_REQUEST['pro_per_page'] ) ) {
-				$per_page               = isset( $_GET['pro_per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_per_page'] ) ) : '';
+
+
+				$per_page = isset( $_GET['pro_per_page'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_per_page'] ) ) : '';
+				
 				if ( ! empty( $per_page ) ) {
 					$args['post_type']      = 'product';
 			        $args['posts_per_page'] = $per_page;
@@ -278,10 +297,13 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 				
 			}
 			
-			$args['meta_query'] = $meta_query;
-			$webhooks    = new WP_Query( $args );
-			$total_items = $webhooks->found_posts;
+			if (!empty($meta_query)) {
+				$args['meta_query'] = $meta_query;
+			}
 			
+			$webhooks    = new WP_Query( $args );
+			
+
 			if ( ! empty( $_REQUEST['s'] ) ) {
 				if ( isset( $_REQUEST['ced_fruugo_search_by'] ) && 'sku' == sanitize_text_field($_REQUEST['ced_fruugo_search_by']) ) {
 					$args = array(
@@ -298,14 +320,16 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 						'compare' => 'LIKE',
 						'value'   => sanitize_text_field( $_REQUEST['s'] ),
 					);
+					if (!empty($meta_query)) {
 					$args['meta_query'] = $meta_query;
-
+					}
 					$webhooks = new WP_Query( $args );
 				}
 			}
 			
-			$total_items = $webhooks->found_posts;
 			$this->_loop = $webhooks;
+			$total_items = $webhooks->found_posts;
+			
 			$this->set_pagination_args(
 				array(
 					'total_items' => $total_items,
@@ -322,6 +346,19 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 		 * @see WP_List_Table::display_rows()
 		 */
 		public function display_rows() {
+
+			if ( ! empty( $_REQUEST['status_sorting'] ) ) {
+				$status_sorting        = isset( $_GET['status_sorting'] ) ? sanitize_text_field($_GET['status_sorting']) : '';
+				$availableMarketPlaces = fruugoget_enabled_marketplaces();
+				if ( is_array( $availableMarketPlaces ) && ! empty( $availableMarketPlaces ) ) {
+					$tempsection = $availableMarketPlaces[0];
+					if ( isset( $_GET['section'] ) ) {
+						$tempsection = esc_attr( sanitize_text_field($_GET['section']) );
+					}
+				}
+			} else {
+				$status_sorting = isset( $_GET['status_sorting'] ) ? sanitize_text_field($_GET['status_sorting']) : '';
+			}
 
 			if ( ! empty( $_REQUEST['status_sorting'] ) ) {
 				$status_sorting        = isset( $_GET['status_sorting'] ) ? sanitize_text_field($_GET['status_sorting']) : '';
@@ -811,6 +848,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 								// echo '<br>';
 								if ( is_array( $status ) ) {
 									$is_ready = isset( $status['isReady'] ) ? $status['isReady'] : false;
+									
 									if ( $is_ready ) {
 										$listing_id = get_post_meta( $product_id, 'fruugoSkuId', true );
 										if ( '' != $listing_id ) {
@@ -818,6 +856,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 										} else {
 											$html .= '<span class="ced_fruugo_proReady">' . $marketplace . ': Ready </span></div>';
 										}
+										
 									} else {
 										$html .= '<span class="ced_fruugo_proMissing ced_fruugo_IsReady"> <b style="color:red">Missing Listing Data</b> </span><div class="ced_fruugo_MissingData">';
 
@@ -825,6 +864,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 										$html      .= $this->printMissingData( $errorArray );
 										$html      .= '</div>';
 										$html      .= '</div>';
+										// update_post_meta($product_id,'ced_fruugo_ready','invalid');
 									}
 								}
 							}
@@ -991,6 +1031,7 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 			}
 		}
 
+			
 		/**
 		 * Caching mechanism for checking if
 		 * data available for listing.
@@ -1091,6 +1132,19 @@ if ( ! class_exists( 'CED_FRUUGO_Product_Lister' ) ) :
 					);
 					
 
+				}
+			}
+
+			if ( ! empty( $_REQUEST['pro_valid_status'] ) ) {
+				
+				$pro_valid_status = isset( $_GET['pro_valid_status'] ) ? sanitize_text_field( wp_unslash( $_GET['pro_valid_status'] ) ) : '';
+				echo $pro_valid_status; //die(__METHOD__);
+				if ( ! empty( $pro_valid_status ) ) {
+					$args['meta_query'][]  = array(
+						'key'     => 'ced_fruugo_ready',
+						'value'   =>  $pro_valid_status ,
+						'compare' => '=',
+					);
 				}
 			}
 

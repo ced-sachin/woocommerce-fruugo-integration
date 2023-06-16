@@ -155,6 +155,16 @@ if ( is_array( $availableMarketPlaces ) && ! empty( $availableMarketPlaces ) ) {
 			);
 			$previous_selected_status = isset( $_GET['pro_status_sorting'] ) ? sanitize_text_field($_GET['pro_status_sorting']) : '';
 
+			//start invalid/valid product filter 15 June 2023
+
+			$prod_val_filter = array(
+				'valid' => __( 'Ready To Upload', 'ced-fruugo' ),
+				'invalid' => __('Missing Listing Data', 'ced-fruugo' ),
+			);
+
+			$previous_selected_validation = isset( $_GET['pro_valid_status'] ) ? sanitize_text_field($_GET['pro_valid_status']) : '';
+
+			//end invalid/valid product filter 15 June 2023
 			
 			$product_per_page = array(
 				'10'  => __( '10 per page', 'ced-fruugo' ),
@@ -219,9 +229,21 @@ if ( is_array( $availableMarketPlaces ) && ! empty( $availableMarketPlaces ) ) {
 				//var_dump( $selected_status);
 				echo '</select>';
 
-				
-				//class="select_boxes_product_page"
-				echo '<select name="pro_per_page">';
+			//invalid/valid product filter start June 15 2023
+			echo '<select name="pro_valid_status">';
+			echo '<option value="">' . esc_html( __( 'Validation', 'ced-fruugo' ) ) . '</option>';
+
+			foreach ( $prod_val_filter as $index => $value ) {
+				$selected_valid = ( $previous_selected_validation == $index ) ? 'selected="selected"' : '';
+
+				$class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
+				echo '<option value="' . esc_attr( $index ) . '" ' . esc_attr( $selected_valid ) . '>' . esc_attr( $value ) . '</option>';
+			}
+			//var_dump( $selected_status);
+			echo '</select>';
+			//invalid/valid product filter end June 15 2023
+			//class="select_boxes_product_page"
+			echo '<select name="pro_per_page">';
 			echo '<option value="">' . esc_html( __( 'Product Per Page', 'ced-fruugo' ) ) . '</option>';
 			foreach ( $product_per_page as $name => $title ) {
 				$selected_type = ( $previous_selected_pro_per_page == $name ) ? 'selected="selected"' : '';

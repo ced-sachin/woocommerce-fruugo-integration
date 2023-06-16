@@ -795,9 +795,11 @@ if ( ! class_exists( 'CED_FRUUGO_Manager' ) ) :
 				if ( is_array( $missingValues ) && ! empty( $missingValues ) ) {
 					$statusArray['isReady']     = false;
 					$statusArray['missingData'] = $missingValues;
+					update_post_meta($proId,'ced_fruugo_ready','invalid');
 					return $statusArray;
 				} else {
 					$statusArray['isReady'] = true;
+					update_post_meta($proId,'ced_fruugo_ready','valid');
 					return $statusArray;
 				}
 			}
